@@ -1,60 +1,46 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class SpellSwitcher : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> spellsList = new List<GameObject>();
+    [SerializeField] private List<GameObject> spellsList;
 
     [SerializeField] private KeyCode attackKey;
     [SerializeField] private KeyCode switchKey;
 
-    private GameObject _activeSpell;
-    private int _spellIndex = 0;
-
+    private int _spellIndex;
 
     private void Start()
     {
-        if (spellsList.Count != 0)
-            _activeSpell = spellsList[0];
+        if (spellsList.Count == 0) SendError();
     }
 
     private void Update()
     {
-        if (spellsList.Count == 0) SendError();
-        
-        else
-        {
-            if (Input.GetKeyDown(attackKey))
-                UseSpell();
-            if (Input.GetKeyDown(switchKey))
-                SwitchSpell();
-        }
+        if(Input.GetKeyDown(attackKey))
+            UseSpell();
+        if(Input.GetKeyDown(switchKey))
+            SwitchSpell();
     }
 
-    void SwitchSpell()
+    private void SwitchSpell()
     {
-        _spellIndex += 1 ;
-        _activeSpell = spellsList[_spellIndex % spellsList.Count];
+        _spellIndex += 1;
+        _spellIndex %= spellsList.Count;
     }
-    
-    void UseSpell()
-    {
-        if (_activeSpell != null)
-        {
-            Instantiate(
-                _activeSpell,
-                transform.position,
-                gameObject.transform.rotation
-            );
-        }
 
+    private void UseSpell()
+    {
+        Quaternion spellRotation = transform.localScale.x > 0 ? transform.rotation : new Quaternion(0f, 0f, 180f,0f);
+        Instantiate(
+            spellsList[_spellIndex],
+            transform.position,
+            spellRotation);
     }
 
     void SendError()
     {
-        Debug.Log("Daun, spell dobav`");
+        Debug.Log("WARNING: 0 spells was added to the list!");
     }
     
 }
