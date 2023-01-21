@@ -1,31 +1,33 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class LightningAttack : MonoBehaviour
 {
-    [SerializeField]private GameObject lightning;
-    private List<GameObject> enemiesArray = new List<GameObject>();
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.tag == "Enemy")
-            enemiesArray.Add(other.gameObject);
-    }
+    [Header("References")]
+    [SerializeField] private GameObject lightning;
 
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        for (int i = 0; i < enemiesArray.Count; i++)
-            if (other.gameObject.name == enemiesArray[i].name)
-                enemiesArray.Remove(enemiesArray[i]);
-    }
+    [Header("Parameters")]
+    [SerializeField] private float width;
+    [SerializeField] private float height;
+    
+    private readonly List<GameObject> _enemiesArray = new List<GameObject>();
 
-    private void Update()
+    private void Awake()
     {
-        if(Input.GetKeyDown(KeyCode.S))
-            foreach (GameObject enemy in enemiesArray)
-                Instantiate(lightning, enemy.transform.position, quaternion.identity);
+        ContactFilter2D contactFilter2D = new ContactFilter2D().NoFilter();
+        List<Collider2D> listCollider = new List<Collider2D>();
+        BoxCollider2D rangeCollider = gameObject.AddComponent<BoxCollider2D>();
+        rangeCollider.isTrigger = true;
+        rangeCollider.size = new Vector2(width, height);
+        rangeCollider.OverlapCollider(contactFilter2D, listCollider);
+        foreach (var colliderInList in listCollider.Where(colliderInList => colliderInList.CompareTag("Enemy")))
+        {
+            _enemiesArray.Add(colliderInList.gameObject);
+        }
+        foreach (GameObject enemy in _enemiesArray)
+            Instantiate(lightning, enemy.transform.position, quaternion.identity);
+        Destroy(gameObject);
     }
 }
