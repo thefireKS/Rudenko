@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class LightningAttack : MonoBehaviour
 {
+    [SerializeField] private int damage = 1;
+    
     [Header("References")]
     [SerializeField] private GameObject lightning;
 
@@ -27,7 +29,11 @@ public class LightningAttack : MonoBehaviour
             _enemiesArray.Add(colliderInList.gameObject);
         }
         foreach (GameObject enemy in _enemiesArray)
+        {
             Instantiate(lightning, enemy.transform.position, quaternion.identity);
+            enemy.GetComponent<EnemyCore>().TakeDamage(damage);
+        }
+            
         Destroy(gameObject);
     }
 }
