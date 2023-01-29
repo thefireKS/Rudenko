@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c7f1a064f095e40981d7e11b09447b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  damage: 1
   lightning: {fileID: 2252202569742445160, guid: b99eae85d3b89bd4f9065cb1c881578d, type: 3}
   width: 10
   height: 3
